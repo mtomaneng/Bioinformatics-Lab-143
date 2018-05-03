@@ -1,0 +1,256 @@
+---
+title: "Bioinformatics Class 08"
+author: "Matthew Tomaneng"
+date: "4/26/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Unstructured learning: K clustering
+```{r}
+# Generate some example data for clustering
+tmp <- c(rnorm(30,-3), rnorm(30,3))
+x <- cbind(x=tmp, y=rev(tmp))
+plot(x)
+```
+
+Our Tasks
+Use the kmeans() function setting k to 2 and nstart=20
+```{r}
+km <- kmeans(x, centers = 2, nstart = 20)
+print(km)
+```
+
+
+Inspect/print the results
+Q. How many points are in each cluster?
+```{r}
+km$cluster
+```
+Q. What ‘component’ of your result object details
+- cluster size?
+```{r}
+km$size
+```
+
+- cluster assignment/membership?
+```{r}
+km$cluster
+```
+
+- cluster center?
+```{r}
+km$centers
+```
+Plot x colored by the kmeans cluster assignment and
+add cluster centers as blue points
+```{r}
+#Color Coding only the clusters so far
+plot(x, col = km$cluster)
+#Now we make the centers blue and with a different shape
+points(km$centers, col = "blue", pch=15)
+```
+Repeat for k=3, which one has the better total SS? 
+```{r}
+#Repeat k cluster for k = 3
+km2 <- kmeans(x, centers = 3, nstart = 20)
+print(km2)
+```
+
+```{r}
+plot(x, col = km2$cluster)
+points(km2$centers, col = "blue", pch = 15)
+```
+
+#Hierarchial Clustering
+
+Lets try on our X plot
+```{r}
+#First we need to calculate point(dis)similarity
+#as the euclidean distance between observations
+dist_matrix <- dist(x) 
+hc <- hclust(d = dist_matrix)
+
+# the print method is not so useful here so we use plot
+hc
+```
+Lets draw the tree (plot)
+```{r}
+#You can choose how many clusters you want and simply move down #  from the top
+plot(hc)
+abline(h=6, col = "red")
+cutree(hc, h=6) # Cut by height h
+```
+
+I can 'cut' the tree at any height to give our clustsers...
+
+```{r}
+#cut at height 6
+cutree(hc, h = 6)
+```
+
+Or ask it to cut yieling 'k' clusters
+```{r}
+#give me 4 clusters
+cutree(hc, k = 4)
+```
+
+Method of clustering matters too!
+```{r}
+#You can argue using: complete, single, average, centroid 
+#hc.complete <- hclust(d, method="complete")
+#hc.average <- hclust(d, method="average")
+#hc.single <- hclust(d, method="single")
+```
+
+
+My Turn
+```{r}
+# Step 1. Generate some example data for clustering
+x <- rbind(
+ matrix(rnorm(100, mean=0, sd = 0.3), ncol = 2), # c1
+ matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2), # c2
+ matrix(c(rnorm(50, mean = 1, sd = 0.3), # c3
+ rnorm(50, mean = 0, sd = 0.3)), ncol = 2))
+colnames(x) <- c("x", "y")
+# Step 2. Plot the data without clustering
+plot(x)
+# Step 3. Generate colors for known clusters
+# (just so we can compare to hclust results)
+col <- as.factor( rep(c("c1","c2","c3"), each=50) )
+plot(x, col=col)
+```
+
+Q. Use the dist(), hclust(), plot() and cutree() functions to return 2 and 3 clusters
+```{r}
+#ALWAYS NEED TO ADD DIST TO HCLUST
+clust <- hclust(dist(x))
+plot(clust)
+
+```
+
+
+```{r}
+#to produce 2 clusters change out k
+members2 <- cutree(clust, k = 2)
+members3 <- cutree(clust, k = 3)
+
+#Lets look at both (remember to cbind the new cutree info to be #  able to plot it)
+cbind(k2 =members2, k3 = members3)
+plot(x, col =members3, pch =15)
+```
+
+##How to do PCA in R
+
+#prcomp function in PCA
+Making up data
+```{r}
+## Initialize a blank 100 row by 10 column matrix
+mydata <- matrix(nrow=100, ncol=10)
+## Lets label the rows gene1, gene2 etc. to gene100
+#Paste makes strings of character values
+rownames(mydata) <- paste("gene", 1:100, sep="")
+## Lets label the first 5 columns wt1, wt2, wt3, wt4 and wt5
+## and the last 5 ko1, ko2 etc. to ko5 (for "knock-out")
+colnames(mydata) <- c( paste("wt", 1:5, sep=""),
+ paste("ko", 1:5, sep="") )
+## Fill in some fake read counts
+for(i in 1:nrow(mydata)) {
+ wt.values <- rpois(5, lambda=sample(x=10:1000, size=1))
+ ko.values <- rpois(5, lambda=sample(x=10:1000, size=1))
+
+ mydata[i,] <- c(wt.values, ko.values)
+}
+head(mydata)
+```
+
+Use prcomp
+```{r}
+#prcomp flips data so you need to reflip it again (t = transpose = flips)
+#head(t(mydata))
+```
+
+```{r}
+pca <- prcomp( t(mydata), scale = TRUE )
+pca
+```
+
+```{r}
+## A basic PC1 vs PC2 plot 2-D
+attributes(pca)
+#x is  the name for our data so we use that in our PCA analysis
+plot(pca$x[,1], pca$x[,2])
+
+```
+
+How well are our PC's capturing our data spread (i.e. variance)
+
+```{r}
+##percent variance is often more informative to look at
+pca.var <- pca$sdev^2
+pca.var.per <- round(pca.var/sum(pca.var)*100, 1)
+
+pca.var.per
+```
+
+plot our scree plot
+
+```{r}
+barplot(pca.var.per, main="Scree Plot",
+ xlab="Principal Component", ylab="Percent Variation")
+```
+
+```{r}
+#color up our PCA plot
+colvec <- colnames(mydata)
+colvec[grep("wt", colvec)] <- "red"
+colvec[grep("ko", colvec)] <- "blue"
+plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
+ xlab=paste0("PC1 (", pca.var.per[1], "%)"),
+ ylab=paste0("PC2 (", pca.var.per[2], "%)")) 
+```
+
+Add some labels to points
+```{r}
+plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
+ xlab=paste0("PC1 (", pca.var.per[1], "%)"),
+ ylab=paste0("PC2 (", pca.var.per[2], "%)")) 
+identify(pca$x[,1], pca$x[,2], labels=colnames(mydata))
+```
+
+Loading scores
+```{r}
+loading_scores <- pca$rotation[,1]
+summary(loading_scores)
+## We are interested in the magnitudes of both plus
+## and minus contributing genes
+gene_scores <- abs(loading_scores) 
+```
+
+UK Foods Hands On
+```{r}
+x <- read.csv("~/Downloads/UK_foods.csv")
+dim(x)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
