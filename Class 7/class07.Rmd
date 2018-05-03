@@ -1,0 +1,154 @@
+---
+title: "Bioniformatics Class 7"
+author: "Matthew Tomaneng"
+date: "4/24/2018"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+##Functions Again
+Revisiting funtions from class 6
+```{r}
+source("http://tinyurl.com/rescale-R")
+```
+
+Lets see if we can use this function
+
+```{r}
+rescale(1:10)
+```
+
+Looks good lets break it!
+
+```{r}
+#rescale(c(1:10, "string"))
+```
+
+Lets try the new **rescale2** function
+
+```{r}
+#rescale2(c(1:10, "string"))
+```
+
+##Lets make a function to count number of NAs
+Write a new function to check for NAs in two inputs
+
+```{r}
+#Start by searching for an existing function that does what you want
+#example data
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+```
+
+
+```{r}
+which(is.na(x))
+```
+How many total NAs
+```{r}
+sum(is.na(x) & is.na(y))
+```
+
+Let's test if this works for both vectors at once
+```{r}
+sum(is.na(c(x, y)))
+```
+#It works!
+Now Let's Combine the Functions to make our function
+```{r}
+num_na <- function(x, y)
+  #Number of NAs in the vectors
+  sum(is.na(c(x, y)))
+```
+Let's test it this works
+
+```{r}
+num_na(x, y)
+```
+
+Test if it works for other situations
+```{r}
+x <- c(NA, NA, NA)
+y1 <- c( 1, NA, NA)
+y2 <- c( 1, NA, NA, NA)
+num_na(x, y2)
+```
+
+I messed up, doing it from both_na3
+```{r}
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+both_na3(x, y)
+```
+
+##Function for gene intersection
+```{r}
+df1
+df2
+x <- df1$IDs
+y <- df2$IDs
+```
+
+```{r}
+x
+y
+```
+
+Found a function called Intersect
+```{r}
+intersect(x, y)
+```
+Not good enough, don't have position data
+```{r}
+#Value Matching funciton
+x%in%y
+```
+
+```{r}
+y%in%x
+```
+Getting a little more information when it comes to position of match
+```{r}
+#We can do better by getting the actual names of the genes
+x[x%in%y]
+```
+Since X is a vector, putting the values into sqaure brackets will return the value
+
+```{r}
+#Now lets combine this info into a single table
+#Put info into two columns 
+cbind(x[x%in%y], y[y%in%x])
+
+```
+
+So now lets make this into a function
+
+```{r}
+#function(x, y) { 
+#   cbind( x[ x %in% y ], y[ y %in% x ] )
+#} Already made in the enviornment
+#Not very clear as well
+```
+
+Lets try the merge function
+```{r}
+merge(df1, df2, by = "IDs")
+```
+##MERGE IS A SUPER HELPFUL FUNCTION
+
+
+
+
+
+
+
+
+
+
+
+
+
