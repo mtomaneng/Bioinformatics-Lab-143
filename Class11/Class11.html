@@ -603,6 +603,26 @@ ca.pdb</code></pre>
 ## + attr: atom, helix, sheet, seqres, xyz,
 ##         calpha, call</code></pre>
 <pre class="r"><code>write.pdb(ca.pdb, file = &quot;calpha_only.pdb&quot;)</code></pre>
+<p>Downloaded MUSCLE onto computer</p>
+<pre class="r"><code># Download some example PDB files
+ids &lt;- c(&quot;1TND_B&quot;,&quot;1AGR_A&quot;,&quot;1TAG_A&quot;,&quot;1GG2_A&quot;,&quot;1KJY_A&quot;,&quot;4G5Q_A&quot;)
+files &lt;- get.pdb(ids, split = TRUE)</code></pre>
+<pre><code>## 
+  |                                                                       
+  |                                                                 |   0%
+  |                                                                       
+  |===========                                                      |  17%
+  |                                                                       
+  |======================                                           |  33%
+  |                                                                       
+  |================================                                 |  50%
+  |                                                                       
+  |===========================================                      |  67%
+  |                                                                       
+  |======================================================           |  83%
+  |                                                                       
+  |=================================================================| 100%</code></pre>
+<pre class="r"><code>??get.pdb</code></pre>
 </div>
 
 

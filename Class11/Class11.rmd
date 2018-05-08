@@ -61,8 +61,89 @@ ca.pdb
 write.pdb(ca.pdb, file = "calpha_only.pdb")
 ```
 
+Downloaded MUSCLE onto computer
+```{r}
+# Download some example PDB files
+ids <- c("1TND_B","1AGR_A","1TAG_A","1GG2_A","1KJY_A","4G5Q_A")
+files <- get.pdb(ids, split = TRUE)
+```
 
+Now we will try to superimpose all the proteins together
+```{r}
+# Extract and align the chains we are interested in
+pdbs <- pdbaln(files, fit = TRUE)
+# Print to screen a summary of the 'pdbs' object
+pdbs
+```
 
+FInd the sequence
+```{r}
+aa <- get.seq("1ake_A")
+aa
+```
 
+Search the PDB database
+```{r, cache = TRUE}
+b <- blast.pdb(aa)
+```
+Plot the graph
+```{r}
+plot(b)
+```
 
+allign structures
+```{r}
+pdbs <- pdbaln(files)
+ids <- basename.pdb
+```
+
+```{r}
+# Access the first 5 rows, and 8 columns
+pdbs$ali[1:5, 1:8]
+# Associated residues numbers
+pdbs$resno[1:5, 1:8]
+```
+
+Find Gaps in the data and remove them
+```{r}
+# Inspect alignment for gaps
+gaps <- gap.inspect(pdbs$ali)
+# Indices of non-gap columns
+head(gaps$f.inds)
+# Access non-gap columns
+pdbs$ali[, gaps$f.inds]
+```
+
+Now to use the dat
+```{r}
+# Calculate sequence identity
+seqidentity(pdbs)
+# Calculate RMSD
+rmsd(pdbs)
+```
+
+Now to start clustering and analyzing data
+```{r}
+# Calculate RMSD
+rd <- rmsd(pdbs)
+# Clustering
+hc <- hclust(as.dist(rd))
+grps <- cutree(hc, k=3)
+# Plot results as dendrogram
+hclustplot(hc, k=3)
+```
+
+PCA 
+```{r}
+# Perform PCA
+pc <- pca(pdbs)
+plot(pc, col=grps)
+```
+
+Normal Analysis
+```{r}
+# NMA all structures
+modes <- nma(pdbs)
+plot(modes, pdbs, col=grps, spread=TRUE)
+```
 
