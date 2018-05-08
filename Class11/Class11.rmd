@@ -1,0 +1,68 @@
+---
+title: "Class11"
+author: "Matthew Tomaneng"
+date: "5/8/2018"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## PDB Statistics
+
+Downlad CSV file from PDB database <http://www.rcsb.org/stats.summary>. Read this into Ra nd ddtermine fraction of X-ray structures
+
+```{r}
+pdb.stats <- read.csv("Data Export Summary.csv")
+```
+
+Let's Calculate something
+
+```{r}
+percent <- (pdb.stats$Total / sum(pdb.stats$Total)) *100
+names(percent) <- pdb.stats$Experimental.Method
+percent
+```
+
+#Working with Bio3D
+Lets load the package
+```{r}
+#install.packages("bio3d")
+library(bio3d)
+```
+
+List the function and try them out
+
+```{r}
+pdb <- read.pdb("1hsg")
+pdb
+```
+
+Q8 Write out a new C-Alpha atom only PDB file for viewing in VMD
+```{r}
+#select only C-alpha carbons
+inds <- atom.select(pdb, "calpha")
+#Check if we got all the c-alpha carbons
+inds
+```
+
+Check if we have what we want
+```{r}
+pdb$atom[inds$atom,]
+```
+
+Let's Write out the and trim the PDB file
+```{r}
+ca.pdb <- trim.pdb(pdb, inds=inds)
+ca.pdb
+write.pdb(ca.pdb, file = "calpha_only.pdb")
+```
+
+
+
+
+
+
