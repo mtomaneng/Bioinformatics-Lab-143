@@ -71,19 +71,32 @@ Section 2.2 Docking indinavir into HIV-1 protease
 
 ```
 
+Section 2.3 Visualizing Results in R
 ```{r}
-
+library(bio3d)
+res <- read.pdb("all.pdbqt", multi=TRUE)
+write.pdb(res, "results.pdb")
+#Go back to VMD to load the results
 ```
 
+#Q4: Qualitatively how does the generated look to the actual
+#A: Pretty darn close
 ```{r}
+#Quantitative Analysis of the results
+# res <- read.pdb("all.pdbqt", multi=TRUE)
+ori <- read.pdb("1hsg_ligand.pdbqt")
+rmsd(ori, res)
+
 
 ```
+#Q5: Quantitatively how good are the docks? Is the crystal binding mode reproduced within 1Å, RMSD for all atoms?
+#A:Results are way above 1Angstrom so the results must not be too close
 
+#Q6How would you determine the RMSD for heavy atoms only (i.e. non hydrogen atoms)?
+#HINT: The atom.select() function will be of help here along with the selection string “noh” for no
+#hydrogens.
 ```{r}
-
-```
-
-```{r}
-
+noh <- atom.select(read.pdb("1hsg_ligand.pdbqt"), type = "ATOM")
+rmsd(noh, res)
 ```
 
