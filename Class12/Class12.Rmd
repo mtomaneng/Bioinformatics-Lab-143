@@ -40,23 +40,34 @@ Section 1.3: Using AutoDockTools to setup protein docking input
 
 ```
 
+#Q2: Can you see the active site
+#A: No, too convoluted with the structure and water atoms
 ```{r}
-
+#Used ADT to add charges and hydrogen atoms to the PDB file and is saved as a pdbqt file
+#We then made a grid box enclosing the active site
+#Centered at (16,25,4) with dimmensions (30,30,30)
 ```
 
+Section: 1.4 Prepare the ligand
 ```{r}
-
+#Now doing the same thing done above but with the ligand file
 ```
 
+Section: 1.5 Prepare a docking configuration file
 ```{r}
-
+#Made a fonfig file for the dimmensions of our docking
+#It will give the computer the info it needs to dock where we want it to
 ```
 
+Section 2 Docking ligands into HIV-1 protease
 ```{r}
-
+#Downloaded autdock vita to run the docking simulation
 ```
-
+Section 2.2 Docking indinavir into HIV-1 protease
 ```{r}
+# ~/Downloads/autodock_vina_1_1_2_mac/bin/vina --config config.txt --log
+#log.tx
+##This will run our docking simulation with the config file we made earlier
 
 ```
 
