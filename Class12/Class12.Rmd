@@ -96,7 +96,9 @@ rmsd(ori, res)
 #HINT: The atom.select() function will be of help here along with the selection string “noh” for no
 #hydrogens.
 ```{r}
-noh <- atom.select(read.pdb("1hsg_ligand.pdbqt"), type = "ATOM")
-rmsd(noh, res)
+inds.res <- atom.select(res, "noh")
+inds.res
+res$xyz[inds.res$xyz]
+
 ```
 
