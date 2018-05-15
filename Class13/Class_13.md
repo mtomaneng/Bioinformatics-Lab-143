@@ -7,9 +7,7 @@ output:
     keep_md: yes
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 ## Genome Informatics (Part 1)
 #Section 1
@@ -26,13 +24,37 @@ Q5: What proportion of the Mexican Ancestry in Los Angeles sample population (MX
 are homozygous for the asthma associated SNP (G|G)?
 [HINT: You can download a CVS file for this population from ENSEMBLE and use the R
 functions read.csv(), and table() to answer this question] 
-```{r}
+
+```r
 mxl <- read.table("Mexican_genome.csv", header = TRUE)
 table(mxl$X..Genotype)
+```
+
+```
+## 
+## ,"A|A","ALL, ,"A|G","ALL, ,"G|A","ALL, ,"G|G","ALL, 
+##           22           21           12            9
+```
+
+```r
 #table gives us a summary of the different outputs for a column
 nrow(mxl)
+```
+
+```
+## [1] 64
+```
+
+```r
 #number of total genomes present
 9/64
+```
+
+```
+## [1] 0.140625
+```
+
+```r
 # 14% is the answer
 ```
 
@@ -49,49 +71,106 @@ the format is fastqsanger here!
 A: 3863 sequences
 
 Q8:  Does the first sequence have good quality? 
-```{r}
+
+```r
 #install.packages("seqinr")
 #install.packages("gtools")
 library(seqinr)
 library(gtools)
 phred <- asc(s2c("DDDDCDEDCDDDDBBDDDCC@")) - 33
 phred
+```
 
+```
+##  D  D  D  D  C  D  E  D  C  D  D  D  D  B  B  D  D  D  C  C  @ 
+## 35 35 35 35 34 35 36 35 34 35 35 35 35 33 33 35 35 35 34 34 31
 ```
 A: Yes decent quality
 
-```{r}
+
+```r
 #http://129.114.104.32/u/spongebob/h/class-13-matt
 ##This is a link to the history of using the supercomputer "Galaxy"
 ```
 
 
 ##Section 4 Population Analysis
-```{r}
+
+```r
 #Take file and convert into a file R can use
 pop <- read.csv("population_asthma.txt")
 summary(pop)
 ```
 
-```{r}
+```
+##                  sample.geno.exp
+##  1 HG00367 A/G 28.96038  :  1   
+##  10 HG00115 A/G 33.85374 :  1   
+##  100 NA19189 A/G 30.63079:  1   
+##  101 HG00155 A/G 19.1042 :  1   
+##  102 HG00111 A/A 40.82922:  1   
+##  103 NA12827 A/G 25.70962:  1   
+##  (Other)                 :456
+```
+
+
+```r
 table(pop$geno)
+```
+
+```
+## < table of extent 0 >
+```
+
+```r
 nrow(pop)
+```
+
+```
+## [1] 462
+```
+
+```r
 #LEt's plot this
 ```
 
-```{r}
+
+```r
 summary( pop$exp[ (pop$geno =="G/G")])
+```
+
+```
+## Length  Class   Mode 
+##      0   NULL   NULL
+```
+
+```r
  summary( pop$exp[ (pop$geno =="A/A")])
+```
+
+```
+## Length  Class   Mode 
+##      0   NULL   NULL
+```
+
+```r
  summary( pop$exp[ (pop$geno =="A/G")])
 ```
 
+```
+## Length  Class   Mode 
+##      0   NULL   NULL
+```
 
-```{r}
+
+
+```r
 #boxplot(pop ~ geno, data = pop, notch = TRUE)
 ```
 
 
-```{r}
+
+```r
 #install.packages("ggplot2")
 library(ggplot2)
 #ggplot(pop, aes(exp, fill=geno)) + geom_boxplot()
