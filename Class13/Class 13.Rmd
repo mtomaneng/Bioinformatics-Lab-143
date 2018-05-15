@@ -1,0 +1,83 @@
+---
+title: "Class13"
+author: "Matthew Tomaneng"
+date: "5/15/2018"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Genome Informatics (Part 1)
+#Section 1
+Q1: What are those 4 candidate SNPs? 
+
+Q3: What is the location of rs8067378 and what are the different alleles for rs8067378? 
+A:Chromosome 17: 39895095 (forward strand) A/G variants (43% G) 
+
+Q4: What are the downstream genes for rs8067378? Any genes named ZPBP2,
+GSDMB, and ORMDL3? 
+A: GSDMB and ORMDL3 are downstream
+
+Q5: What proportion of the Mexican Ancestry in Los Angeles sample population (MXL)
+are homozygous for the asthma associated SNP (G|G)?
+[HINT: You can download a CVS file for this population from ENSEMBLE and use the R
+functions read.csv(), and table() to answer this question] 
+```{r}
+mxl <- read.table("Mexican_genome.csv", header = TRUE)
+table(mxl$X..Genotype)
+#table gives us a summary of the different outputs for a column
+nrow(mxl)
+#number of total genomes present
+9/64
+# 14% is the answer
+```
+
+Q6. Back on the ENSEMBLE page, search for the particular sample HG00109. This is a
+male from the GBR population group. What is the genotype for this sample?
+A: G|G 
+
+
+#Section 2: Initial RNA-Seq analysis 
+Look more closely at sample HG00109 with G|G genotype for this SNP (from GBR population)
+Q7: How many sequences are there in the first file?
+What is the file size and format of the data? Make sure
+the format is fastqsanger here!
+A: 3863 sequences
+
+Q8:  Does the first sequence have good quality? 
+```{r}
+#install.packages("seqinr")
+#install.packages("gtools")
+library(seqinr)
+library(gtools)
+phred <- asc(s2c("DDDDCDEDCDDDDBBDDDCC@")) - 33
+phred
+
+```
+A: Yes decent quality
+
+```{r}
+#http://129.114.104.32/u/spongebob/h/class-13-matt
+##This is a link to the history of using the supercomputer "Galaxy"
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
