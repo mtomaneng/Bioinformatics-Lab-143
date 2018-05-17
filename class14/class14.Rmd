@@ -134,11 +134,33 @@ results <- merge(mycounts, anno, by.y = "ensgene", by.x = "row.names")
 results
 ```
 
+Won't always have annotation file, so download the packages to do it
+```{r}
+#biocLite("AnnotationDbi")
+#biocLite("org.Hs.eg.dbn")
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+```
+
+Going to Add more details to the existing data
+```{r}
+columns(org.Hs.eg.db)
+```
+
+```{r}
+mycounts$symbol <- mapIds(org.Hs.eg.db,
+                     keys=row.names(mycounts),
+                     column="SYMBOL",
+                     keytype="ENSEMBL",
+                     multiVals="first")
+```
+
+```{r}
+head(mycounts)
+```
 
 
-
-
-
+##DESeq2 Analysis
 
 
 
