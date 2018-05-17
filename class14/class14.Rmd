@@ -1,0 +1,110 @@
+---
+title: "Class14"
+author: "Matthew Tomaneng"
+date: "5/17/2018"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Install DESeq2
+```{r}
+source("http://bioconductor.org/biocLite.R")
+biocLite()
+
+# For this class, you'll also need DESeq2:
+biocLite("DESeq2")
+```
+
+Using Data from Another source
+```{r}
+counts <- read.csv("data/airway_scaledcounts.csv", stringsAsFactors = FALSE)
+metadata <-  read.csv("data/airway_metadata.csv", stringsAsFactors = FALSE)
+```
+
+Check out the data
+```{r}
+head(counts)
+```
+
+```{r}
+head(metadata)
+```
+
+Gene Analysis
+```{r}
+View(metadata)
+```
+
+```{r}
+#Take the control data and form a bew table of only control
+control <- metadata[metadata[,"dex"]=="control",]
+control.mean <- rowSums( counts[ ,control$id] )/ length(control$id)
+#put names back on the genes
+names(control.mean) <- counts$ensgene
+```
+Q1: How would you make this code more robust?
+A: the "4" is only for this data, just divide it by the length of the ID
+```{r}
+head(control)
+head(control.mean)
+```
+
+
+
+Q2. Follow the same procedure for the treated samples (i.e. calculate the mean per gene accross drug treated samples and assign to a labeled vector called treated.mean)
+```{r}
+treated <- metadata[metadata[,"dex"] == "treated",]
+treated.mean <- rowSums ( counts[, treated$id] )/ length(treated$id)
+names(treated.mean) <- counts$ensgene
+```
+
+Check your work
+```{r}
+head(treated)
+head(treated.mean)
+```
+
+Recombine Data
+```{r}
+meancounts <- data.frame(control.mean, treated.mean)
+colSums(meancounts)
+```
+
+Q3. Create a scatter plot showing the mean of the treated samples against the mean of the control samples. Your plot should look something like the following.
+```{r}
+plot(control.mean, treated.mean)
+#Why is there not that many points? Because they overlap each other
+##WE use log of this data to spread it out better
+
+```
+
+LEts make the axis log
+```{r}
+plot(control.mean, treated.mean, log = "xy")
+```
+
+calculate log2foldchange, add it to meancounts data.frame
+```{r}
+meancounts$log2fc <- log2(meancounts[,"treated.mean"]/meancounts[,"control.mean"])
+head(meancounts)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
