@@ -161,6 +161,91 @@ head(mycounts)
 
 
 ##DESeq2 Analysis
+Loading package
+```{r}
+#library("DESeq2")
+```
+
+```{R}
+dds <- DESeqDataSetFromMatrix(countData=counts, 
+                              colData=metadata, 
+                              design=~dex, 
+                              tidy=TRUE)
+dds
+```
+
+```{r}
+#results(dds)
+#error because we never did calculations
+dds <- DESeq(dds)
+#we keep sending back the data back to orginal file, just how it works
+res <- results(dds)
+```
+
+```{r}
+res
+#pvalue and padj added (p adjust)
+##Will learn about this later
+#basically with lots of data there is a high chance of getting a false positive
+#padj makes corrects p value to realtive data
+```
+
+```{r}
+summary(res)
+```
+
+Order summary
+```{r}
+resOrdered <- res[order(res$pvalue),]
+resOrdered
+```
+
+Adjusting p-value
+```{r}
+resSig01 <- results(dds, alpha = .01)
+resSig01$symbols <-  mapIds(org.Hs.eg.db,
+                     keys=row.names(resSig01),
+                     column="SYMBOL",
+                     keytype="ENSEMBL",
+                     multiVals="first")
+res05 <- results(dds, alpha=0.05)
+summary(resSig01)
+```
+
+A more generic view of this
+```{r}
+resSig05 <- subset(as.data.frame(res), padj < 0.05)
+nrow(resSig05)
+resSig01 <- subset(as.data.frame(res), padj < .01)
+```
+
+View the Results in order again
+```{r}
+ord <- order( resSig01$padj )
+#View(res01[ord,])
+head(resSig01[ord,])
+```
+
+Make a CSV file from the data
+```{r}
+write.csv(resSig01[ord,], "signif01_results.csv")
+```
+
+##Data Visualization
+
+Plotting Counts
+```{r}
+i <- grep("CRISPLD2", resSig01$symbol)
+resSig01[i,]
+```
+
+```{r}
+rownames(resSig01[i,])
+```
+
+
+
+
 
 
 
