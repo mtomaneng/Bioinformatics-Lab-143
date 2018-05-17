@@ -92,12 +92,47 @@ calculate log2foldchange, add it to meancounts data.frame
 ```{r}
 meancounts$log2fc <- log2(meancounts[,"treated.mean"]/meancounts[,"control.mean"])
 head(meancounts)
+#NaN means 0/0 and no expression
+#-inf means negative infinity which equals #/0
 ```
 
+Filter Out nonusable data
+```{r}
+zero.vals <- which(meancounts[,1:2]==0, arr.ind=TRUE)
+#arr.ind gives back a value corresponding to row and column and not just in a vector
+#Gives a coordinate in the matrix
 
+to.rm <- unique(zero.vals[,1])
+mycounts <- meancounts[-to.rm,]
+head(mycounts)
+```
 
+Finding which points were up or down regulated
+```{r}
+up.ind <- mycounts$log2fc > 2
+down.ind <- mycounts$log2fc < (-2)
+```
 
+Q5. Using the up.ind and down.ind vectors above can you determine how many up and down regulated genes we have at the greater than 2 fc level?
+```{r}
+#print(up.ind)
+#Want to find how many True's there are
+sum(up.ind)
+sum(down.ind)
+```
 
+##Adding annotation data
+```{r}
+anno <- read.csv("data/annotables_grch38.csv")
+head(anno)
+```
+
+Q6. From consulting the help page for the merge() function can you set the by.x and by.y arguments appropriately to annotate our mycounts data.frame with all the available annotation data in your anno data.frame?
+```{r}
+?merge
+results <- merge(mycounts, anno, by.y = "ensgene", by.x = "row.names")
+results
+```
 
 
 
