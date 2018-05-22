@@ -138,7 +138,11 @@ names(foldchanges) = res$entrez
 head(foldchanges)
 ```
 
-Lets use Gage function
+Lets use Gage function. This will give us overlap in our data and other experimental data
+```{r}
+
+```
+
 
 
 
