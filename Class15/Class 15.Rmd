@@ -243,9 +243,3 @@ A: Transcription of E2F targets. They do match the KEGG results. Differences cou
 
 
 
-
-
-
-
-
-
