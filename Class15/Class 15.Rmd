@@ -1,0 +1,169 @@
+---
+title: "Class15"
+author: "Matthew Tomaneng"
+date: "5/22/2018"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+##Section 1
+Use DESeq2 again
+
+```{r}
+#library(dplyr)
+library(DESeq2)
+```
+
+load data files
+```{r}
+metaFile <- "data/GSE37704_metadata.csv"
+countFile <- "data/GSE37704_featurecounts.csv"
+
+# Import metadata and take a peak
+colData = read.csv(metaFile, row.names=1)
+head(colData)
+```
+
+```{r}
+# Import countdata
+countData = read.csv(countFile, row.names=1)
+head(countData)
+```
+
+We want to get rid of the odd "Length" column
+```{r}
+# Note we need to remove the odd first $length col
+countData <- as.matrix(countData[,-1])
+head(countData)
+```
+
+Filter out 0's in data
+```{r}
+# Filter count data where you have 0 read count across all samples.
+countData = countData[rowSums(countData)>1, ]
+head(countData)
+```
+
+Now our data is usable for DESeq
+```{r}
+dds = DESeqDataSetFromMatrix(countData=countData,
+                             colData=colData,
+                             design=~condition)
+dds = DESeq(dds)
+```
+
+Lets checkk out dds
+```{r}
+dds
+```
+
+#We are able to work with specific genes now
+We will look at “hoxa1_kd” and “control_sirna”
+```{r}
+resultsNames(dds)
+res = results(dds, contrast=c("condition", "hoxa1_kd", "control_sirna"))
+```
+
+Reorder p-values and call a summary to get a sense of which is up and down regulated
+```{r}
+res = res[order(res$pvalue),]
+summary(res)
+```
+
+Our data is labeled with Ensembl notation but we need Entrez Gene ID's
+```{r}
+#This is calling out the data tables with the translation names
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+
+columns(org.Hs.eg.db)
+```
+
+We can use this to translate our Ensebl to Entrez
+```{r}
+#Transform symbol into the Ensembl ID
+res$symbol = mapIds(org.Hs.eg.db,
+                    keys=row.names(res), 
+                    column="SYMBOL",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+
+#Transform EntrezID to Ensembl
+res$entrez = mapIds(org.Hs.eg.db,
+                    keys=row.names(res), 
+                    column="ENTREZID",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+
+#Transform the genename to Ensembl
+res$name =   mapIds(org.Hs.eg.db,
+                    keys=row.names(res), 
+                    column="GENENAME",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+
+head(res, 10)
+```
+
+##Section 2: Pathway Analysis
+Download packages we need
+```{r}
+#source("http://bioconductor.org/biocLite.R")
+#biocLite( c("pathview", "gage", "gageData") )
+```
+
+```{r}
+library(pathview)
+```
+
+```{r}
+library(gage)
+library(gageData)
+
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+
+kegg.sets.hs = kegg.sets.hs[sigmet.idx.hs]
+head(kegg.sets.hs, 3)
+```
+
+gage() function requires a named vector of fold changes, where the names of the values are the Entrez gene IDs
+```{r}
+foldchanges = res$log2FoldChange
+names(foldchanges) = res$entrez
+head(foldchanges)
+```
+
+Lets use Gage function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
