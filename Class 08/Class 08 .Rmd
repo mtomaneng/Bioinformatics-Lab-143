@@ -233,8 +233,8 @@ gene_scores <- abs(loading_scores)
 
 UK Foods Hands On
 ```{r}
-x <- read.csv("~/Downloads/UK_foods.csv")
-dim(x)
+#x <- read.csv("~/Downloads/UK_foods.csv")
+#dim(x)
 ```
 
 
