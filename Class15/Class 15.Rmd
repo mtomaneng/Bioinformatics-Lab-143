@@ -1,7 +1,6 @@
 ---
 title: "Class15"
 author: "Matthew Tomaneng"
-date: "5/22/2018"
 output: 
   html_document: 
     keep_md: yes
@@ -218,7 +217,7 @@ Reactome is database consisting of biological molecules and their relation to pa
 First, Using R, output the list of significant genes at the 0.05 level as a plain text file:
 
 ```{r}
-install.packages("reactome")
+#install.packages("reactome")
 ```
 
 ```{r}
