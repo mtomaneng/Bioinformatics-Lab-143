@@ -1,7 +1,6 @@
 ---
 title: "Bioinformatics Class 08"
 author: "Matthew Tomaneng"
-date: "4/26/2018"
 output: 
   html_document: 
     keep_md: yes
