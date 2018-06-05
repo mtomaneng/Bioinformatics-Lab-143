@@ -1,0 +1,154 @@
+---
+title: "class18"
+author: "Matthew Tomaneng"
+date: "5/31/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Part 1: Exploring GDC online
+p53
+Q1: Total cases are 4,008
+Q2: AA change in R175H, actually the top 6 are all AA changes in different locations
+Q3: Binding domain or PF00870
+Q4: Top 6 primary locations: uterus, ovaries, lung, esophoagus, colorectal, head and neck
+
+Kras
+Q5: most frequent mutation associated with cancer is at G12D
+Q6: It is the most common site for kras mutations
+Q7: The project with the most kras mutations is TCGA-PAAD
+Q8: There are 740 files with data on the patients
+
+#Section 2
+Install the packages needed for class today
+```{r}
+#source("https://bioconductor.org/biocLite.R")
+#biocLite(c("GenomicDataCommons", "maftools"))
+library(GenomicDataCommons)
+library(maftools)
+```
+
+GenomicDataCommons package will allow us to interact with GDC website via R
+```{r}
+#Check on the status of GDC
+GenomicDataCommons::status()
+```
+
+
+#Section 3: Working with GDC
+We will take metadata from a case to answer our questions
+```{r}
+cases_by_project <- cases() %>%
+  facet("project.project_id") %>%
+  aggregations()
+
+head(cases_by_project)
+
+```
+
+```{r}
+?barplot
+
+```
+
+Q9: Time to make a plot of the projects
+```{r}
+x <- cases_by_project$project.project_id
+count <- x$doc_count
+#x$key
+my_cols <- rep("lightblue", length(x$key))
+#my_cols[27] = "red"
+#x[,1] == "TCGA-PAAD"
+ind <- which(x[,1] == "TCGA-PAAD")
+my_cols[ind] = "red"
+```
+
+```{r}
+barplot(count, 
+        names.arg = x$key,
+        las =2,
+        log ="y",
+        col = my_cols
+        )
+```
+
+
+
+Lets take a different set of information and use that
+```{r}
+## This code snipet is taken from the package vignette
+file_records <- files() %>%
+  filter(~ cases.project.project_id == "TCGA-PAAD" &
+    data_type == "Gene Expression Quantification" &
+    analysis.workflow_type == "HTSeq - Counts") #%>%
+  #response_all(file_records)
+```
+
+
+
+
+
+
+
+#Part 2
+Q1: Identify sequence regions that contain all 9-mer peptides that are only found in the tumor
+```{r}
+library(bio3d)
+fasta <- read.fasta("lecture18_sequences.fa")
+#ale <- seqidentity(fasta, normalize = FALSE)
+#ale <- 1-ale
+#heatmap(ale)
+```
+
+
+```{r}
+x <- conserv(fasta)
+x
+which(x != 1)
+
+```
+Since there are more in the normal, we only care about after 259. Which gives 3 mutations at position: 41, 65, 213, 259
+
+```{r}
+gaps <- gap.inspect(fasta)
+mutant.sites <- mutant.sites[mutant.sites %in% gaps$f.inds]
+```
+
+
+#Section 2: Patient HLA typing results and LA binding prediction
+First make names for the mutants (4 total)
+```{r}
+## Calculate positional identity scores
+ide <- conserv(fasta$ali, method="identity")
+mutant.sites <- which(ide < 1) 
+## Make a "names" label for our output sequences (one per mutant)
+mutant.names <- paste0(fasta$ali["P53_wt",mutant.sites],
+                       mutant.sites,
+                       fasta$ali["P53_mutant",mutant.sites])
+
+mutant.names
+```
+
+```{r}
+## Sequence positions surounding each mutant site
+start.position <- mutant.sites - 8
+end.position <-  mutant.sites + 8
+
+# Blank matrix to store sub-sequences
+store.fasta <- matrix("-", nrow=length(mutant.sites), ncol=17)
+rownames(store.fasta) <- mutant.names
+
+## Extract each sub-sequence
+for(i in 1:length(mutant.sites)) {
+  store.fasta[i,] <- fasta$ali["P53_mutant",start.position[i]:end.position[i]]
+}
+
+store.fasta
+```
+
+
+
+

@@ -1,0 +1,77 @@
+---
+title: "Find_A_Gene_Project"
+author: "Matthew Tomaneng"
+date: "5/28/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Q7
+
+Need to download bio3D
+```{r}
+library("bio3d")
+```
+
+What Do I need for a heat 
+```{r}
+?heatmap
+```
+
+Let's TRY AGAIN
+```{r}
+aln <- read.fasta("regions.fst")
+num_mat <- seqidentity(aln)
+```
+
+
+```{r}
+heatmap(num_mat, margins = c(12, 12))
+```
+
+
+
+
+
+
+
+
+Q8
+```{r}
+#WHat does Consesus do
+whale <- read.fasta("Whale_Shark_Fasta")
+cons <- consensus(whale)
+```
+
+```{r}
+blast.pdb(cons)
+```
+
+Need PDB Identifier, Method to solve the structure, resolution, source organism
+```{r}
+
+```
+
+
+Q9: Use VMD to make a model of the protein identified in Q8
+```{r}
+#Insert PDB file into VMD
+#Be sure to color code the different chains and look for similarities
+#Need to make the final document have a figure and not just a screenshot
+```
+
+
+Q10
+```{r}
+#Look up matches for the protein found in Q8
+# Target Associated Assays and ligand efficiency data is what you're looking for
+# Find out if this could be used for inhibition
+```
+
+
+
+
+
